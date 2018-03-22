@@ -18,7 +18,7 @@ public class JDBCChallenge {
         JDBCChallenge races = new JDBCChallenge();
         // controller
         try {
-            races.readDataBase("Budapest Spring Half Marathon", "Hungary");
+            races.readDataBase("Example Half Marathon", "Unicornland");
         } catch (Exception e) {
             System.out.println("error in readDateBase()" + e.getMessage());
             System.out.println(e.getStackTrace());
@@ -42,6 +42,7 @@ public class JDBCChallenge {
             resultSet = statement.executeQuery("select * from Races.HalfMarathons;");
 
             writeResultSet(resultSet);
+
             ArrayList<HalfMarathon> half = mapResultSetToObjects(resultSet);
 
             for (HalfMarathon h : half) {
@@ -49,36 +50,22 @@ public class JDBCChallenge {
             }
 
 
-            // PreparedStatements can use variables and are more efficient
-            preparedStatement = connection
-                    .prepareStatement("insert into  Races.HalfMarathons (Half_name, Half_Country) " +
-                            "values (?, ?)");
-            // Parameters start with 1
-            preparedStatement.setString(1, Half_name);
-            // preparedStatement.setString(2, credits);
-            preparedStatement.setString(2, Half_Country);
-            //preparedStatement.setString(4, department);
-            preparedStatement.executeUpdate();
-
-
+            insert("Example Half Marathon", "Unicornland");
             preparedStatement = connection
                     .prepareStatement("SELECT * from Races.HalfMarathons");
             resultSet = preparedStatement.executeQuery();
 
-            //writeResultSet(resultSet);
+            writeResultSet(resultSet);
 
+            delete("Example Half Marathon");
 
-            //Remove again the insert comment
-            preparedStatement = connection
-                    .prepareStatement("delete from Races.HalfMarathons where Half_name = ? ; ");
-            preparedStatement.setString(1, "JDBC Half Marathon 1");
-            preparedStatement.executeUpdate();
 
             resultSet = statement.executeQuery("select * from Races.HalfMarathons");
 
             writeMetaData(resultSet);
 
             writeResultSet(resultSet);
+            joinQuery(resultSet);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -121,28 +108,65 @@ public class JDBCChallenge {
             System.out.println("---------------------------------");
 
         }
+
+
+        // select one or more records from the DB
+        /*preparedStatement = connection
+                .prepareStatement("SELECT * from Races.HalfMarathons");
+        resultSet = preparedStatement.executeQuery();*/
+
+        // call the mapResultSetToObjects()
+
     }
 
-
-    // select one or more records from the DB
-
-    // call the mapResultSetToObjects()
-    //mapResultSetToObjects();
-    //}
-
     // demonstrate a join query and map the results to another custom object
-//    public YOUR_JOIN_OBJECT joinQuery(){
-//
-//    }
+   public void joinQuery(ResultSet resultSet) throws SQLException {
+// PreparedStatements can use variables and are more efficient
+       this.resultSet = statement.executeQuery("SELECT Runner_fname, Runner_lname, Half_name, Half_Country FROM Races.Runners JOIN Races.Runners_Races on Runners.id = Runners_Races.Runner_id JOIN Races.HalfMarathons on HalfMarathons.id = Runners_Races.Race_id;");
+       while (this.resultSet.next()) {
+           String Runner_fname = this.resultSet.getString("Runner_fname");
+           //String description = resultSet.getString("description");
+           String Runner_lname = this.resultSet.getString("Runner_lname");
+           String Half_name = this.resultSet.getString("Half_name");
+           //String description = resultSet.getString("description");
+           String Half_country = this.resultSet.getString("Half_Country");
+           //String department = resultSet.getString("department");
+           System.out.println(Runner_fname);
+           // System.out.println("Description: " + description);
+           System.out.println(Runner_lname);
+           System.out.println(Half_name);
+           // System.out.println("Description: " + description);
+           System.out.println(Half_country);
+           // System.out.println("Department: " + department);
+           System.out.println("---------------------------------");
+           System.out.println("---------------------------------");
+           preparedStatement.executeUpdate();
+       }
+   }
 
     // insert a record from the db
-    public void insert(String arg1, String arg2) {
+    public void insert(String arg1, String arg2) throws SQLException {
 
+
+        // PreparedStatements can use variables and are more efficient
+        preparedStatement = connection
+                .prepareStatement("insert into  Races.HalfMarathons (Half_name, Half_Country) " +
+                        "values (?, ?)");
+        // Parameters start with 1
+        preparedStatement.setString(1, arg1);
+        // preparedStatement.setString(2, country);
+        preparedStatement.setString(2, arg2);
+        //preparedStatement.setString(4, department);
+        preparedStatement.executeUpdate();
     }
 
     // delete a record from the db
-    public void delete() {
-
+    public void delete(String name) throws SQLException {
+        //Remove again the insert comment
+        preparedStatement = connection
+                .prepareStatement("delete from Races.HalfMarathons where Half_name = ? ; ");
+        preparedStatement.setString(1, name);
+        preparedStatement.executeUpdate();
     }
 
 
@@ -161,7 +185,6 @@ public class JDBCChallenge {
 
         return retList;
     }
-
 
 
     private void close() {

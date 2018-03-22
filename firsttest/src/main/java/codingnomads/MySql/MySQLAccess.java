@@ -62,7 +62,7 @@ import java.util.ArrayList;
                         .prepareStatement("SELECT * from University2.courses");
                 resultSet = preparedStatement.executeQuery();
 
-                //writeResultSet(resultSet);
+                writeResultSet(resultSet);
 
 
 
