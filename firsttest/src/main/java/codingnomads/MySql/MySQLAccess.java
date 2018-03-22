@@ -26,7 +26,7 @@ import java.util.ArrayList;
                 throws Exception {
             try {
                 // This will load the MySQL driver, each DB has its own driver
-                Class.forName("com.mysql.jdbc.Driver");
+                Class.forName("com.mysql.cj.jdbc.Driver");
                 // Setup the connection with the DB
                 connection = DriverManager.getConnection("jdbc:mysql://localhost/University2?" +
                         "user=root&password=Leander97&useSSL=false");

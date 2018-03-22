@@ -29,7 +29,7 @@ public class JDBCChallenge {
             throws Exception {
         try {
             // This will load the MySQL driver, each DB has its own driver
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
             // Setup the connection with the DB
             connection = DriverManager.getConnection("jdbc:mysql://localhost/Races?" +
                     "user=root&password=Leander97&useSSL=false");
@@ -43,9 +43,10 @@ public class JDBCChallenge {
 
             writeResultSet(resultSet);
 
-            ArrayList<HalfMarathon> half = mapResultSetToObjects(resultSet);
+            ArrayList<HalfMarathon> halfmarathon = mapResultSetToObjects(resultSet);
 
-            for (HalfMarathon h : half) {
+
+            for (HalfMarathon h : halfmarathon) {
                 System.out.println(h.toString());
             }
 
@@ -142,6 +143,7 @@ public class JDBCChallenge {
            System.out.println("---------------------------------");
            preparedStatement.executeUpdate();
        }
+
    }
 
     // insert a record from the db
@@ -161,11 +163,11 @@ public class JDBCChallenge {
     }
 
     // delete a record from the db
-    public void delete(String name) throws SQLException {
+    public void delete(String Half_name) throws SQLException {
         //Remove again the insert comment
         preparedStatement = connection
                 .prepareStatement("delete from Races.HalfMarathons where Half_name = ? ; ");
-        preparedStatement.setString(1, name);
+        preparedStatement.setString(1, Half_name);
         preparedStatement.executeUpdate();
     }
 
@@ -173,7 +175,7 @@ public class JDBCChallenge {
     private ArrayList<HalfMarathon> mapResultSetToObjects(ResultSet resultSet) throws SQLException {
         ArrayList<HalfMarathon> retList = new ArrayList();
 
-//        // ResultSet is initially before the first data set
+      // ResultSet is initially before the first data set
         while (resultSet.next()) {
             HalfMarathon h = new HalfMarathon();
             h.setId(resultSet.getInt("id"));
